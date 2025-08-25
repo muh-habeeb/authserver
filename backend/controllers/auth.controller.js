@@ -103,4 +103,12 @@ export const verifyAccount = async (req, res, next) => {
 
 export const login = async (req, res, next) => {};
 
-export const logOut = async (req, res, next) => {};
+export const logOut = async (req, res, next) => {
+  res.clearCookie("token");
+
+  return res.status(200).json({
+    // 204 for no content
+    success: true,
+    message: "Logged out successfully",
+  });
+};

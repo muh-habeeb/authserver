@@ -91,6 +91,7 @@ export const verifyAccount = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "account verified successfully",
+      user,
     });
   } catch (error) {
     console.log(error);

@@ -222,7 +222,7 @@ export const resetPassword = async (req, res) => {
       message: "password updated successfully",
     });
   } catch (error) {
-    console.log("error in forgotPassword", error);
+    console.log("error in reset password", error);
     return res
       .status(500)
       .json({ success: false, message: "internal server error" });

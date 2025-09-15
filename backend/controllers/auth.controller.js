@@ -2,9 +2,12 @@ import { User } from "../model/user.model.js";
 import bcryptjs from "bcryptjs";
 import { genJwtAndSetCookie } from "../util/genJwtAndSetCookie.js";
 import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
+import { validationResult } from "express-validator";
 
 export const signup = async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+
     const { email, password, name } = req.body;
     if (!email || !password || !name) {
       throw new Error("all field are required");
@@ -28,7 +31,7 @@ export const signup = async (req, res, next) => {
       name,
       password: hashPassword,
       verificationToken,
-      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+      verificationTokenExpiresAt: Date.now() + 1 * 60 * 60 * 1000, // 1 hours
     });
     // save the user
     await user.save();
@@ -56,25 +59,27 @@ export const signup = async (req, res, next) => {
 
 export const verifyAccount = async (req, res, next) => {
   // const { email, verificationToken } = req.body;
-  const { code: verificationToken } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { code: verificationToken } = req.body; // already sanitized
   try {
+    console.log("code", verificationToken);
+
     // const user = await User.findOne({ email });
     const user = await User.findOne({ verificationToken });
 
     // check for user?
     if (!user) {
-      return res.status(404).json({
+      console.log(user);
+
+      return res.status(400).json({
         success: false,
-        message: "user not found",
+        message: "token  not found",
       });
     }
-
-    // if (user.verificationToken !== verificationToken) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "invalid verification token",
-    //   });
-    // }
 
     if (user.verificationTokenExpiresAt < Date.now()) {
       return res.status(400).json({
@@ -86,7 +91,7 @@ export const verifyAccount = async (req, res, next) => {
     user.isVerified = true;
     user.verificationToken = null;
     user.verificationTokenExpiresAt = null;
-    await user.save();
+    await user.save(); // save the new user
     await sendWelcomeEmail(user.email, user.name);
     return res.status(200).json({
       success: true,

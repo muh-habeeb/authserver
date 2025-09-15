@@ -96,7 +96,8 @@ export const verifyAccount = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "account verified successfully",
-      user,
+      ...user._doc,
+      password: null, //security reasons
     });
   } catch (error) {
     console.log(error);
@@ -107,11 +108,45 @@ export const verifyAccount = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res, next) => {};
+export const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Credentials",
+      });
+    }
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Credentials",
+      });
+    }
+    genJwtAndSetCookie(res, user._id);
+    user.lastLogin = new Date();
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      ...user._doc,
+      password: null,
+    });
+  } catch (error) {
+    console.log("Error in login ,", error);
+    return res.status(500).json({
+      success: false,
+      message: "internal server error",
+    });
+  }
+};
 
 export const logOut = async (req, res, next) => {
   res.clearCookie("token");
-
   return res.status(200).json({
     // 204 for no content
     success: true,

@@ -5,7 +5,7 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
   sendPasswordResetEmail,
-  sendPasswordResetOkMail
+  sendPasswordResetOkMail,
 } from "../mailtrap/emails.js";
 import { validationResult } from "express-validator";
 import crypto from "crypto";
@@ -226,5 +226,27 @@ export const resetPassword = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "internal server error" });
+  }
+};
+//for user is logged or not 
+export const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user)
+      return res.status(400).json({
+        message: "user not found",
+        success: false,
+      });
+
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      message: "server error",
+      success: false,
+    });
   }
 };

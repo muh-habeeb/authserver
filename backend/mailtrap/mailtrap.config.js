@@ -10,20 +10,9 @@ export const mailtrapClient = new MailtrapClient({
   token: TOKEN,
   endpoint: ENDPOINT, // not really required
 });
-console.log("token:", TOKEN);
+// console.log("mailtrap token:", TOKEN);
 
 export const sender = {
   email: "hello@demomailtrap.co",
   name: "CODING WITH MAYAVI",
 };
-
-
-// client
-//   .send({
-//     from: sender,
-//     to: recipients,
-//     subject: "You are awesome!",
-//     html: "<p>Congrats for sending test email with Mailtrap!</p>",
-//     category: "Integration Test",
-//   })
-//   .then(console.log, console.error);

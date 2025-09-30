@@ -5,13 +5,15 @@ import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
 
 const EmailVerification = () => {
-	const [code, setCode] = useState(["", "", "", "", "", ""]);
+	const [code, setCode] = useState(Array(6).fill("")); /// Array to hold 6 digits
 	const inputRefs = useRef([]);
 	const navigate = useNavigate();
 
 	const { error, isLoading, verifyEmail } = useAuthStore();
+	console.log(code)
 
 	const handleChange = (index, value) => {
+		if(!/^\d*$/.test(value)) return; // Only allow digits
 		const newCode = [...code];
 
 		// Handle pasted content
@@ -29,7 +31,6 @@ const EmailVerification = () => {
 		} else {
 			newCode[index] = value;
 			setCode(newCode);
-
 			// Move focus to the next input field if value is entered
 			if (value && index < 5) {
 				inputRefs.current[index + 1].focus();

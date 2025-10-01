@@ -13,6 +13,7 @@ import { useAuthStore } from "./store/AuthStore.js";
 import { useEffect } from "react";
 import Home from "./pages/Home";
 import LoadingScreren from "./components/LoadingScreren";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
 
 const ProtectRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -37,7 +38,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 };
 
 const App = () => {
-  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+  const { isCheckingAuth, checkAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -98,6 +99,7 @@ const App = () => {
             }
           />
           <Route path="/verify-email" element={<EmailVerification />} />
+          <Route path="/forgot-password" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />
         </Routes>
       </Router>
       <Toaster />

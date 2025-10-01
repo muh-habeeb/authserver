@@ -1,28 +1,41 @@
 import { useState } from "react"
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../store/AuthStore.js";
 import { motion } from "framer-motion"
 import { Mail, Lock, Loader, } from "lucide-react"
 import Input from "../components/input";
-import { Link } from "react-router-dom";
-// const { login, isLoading, error } = useAuthStore();
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 const SignIn = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-
-  })
-  const error= false
-  const isLoading = false
-  // generic change handler
-  const handleInputChange = (e) => {
+  const { login, isLoading, error } = useAuthStore();
+  const navigate = useNavigate();
+  //to manage the input fileds
+  const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-  const handleLogin = (e) => {
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+
+  })
+
+  // generic change handler
+  const handleLogin = async (e) => {
     e.preventDefault()
+    try {
+      await login(formData.email, formData.password);
+      toast.success("Login successful!");
+      navigate("/")
+    }
+    catch (error) {
+      toast.error(error?.response?.data?.message)
+      // console.log("errorroor:", error?.response?.data?.message || error.message);
+
+    }
   }
 
 
@@ -32,7 +45,7 @@ const SignIn = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-       className="max-w-md w-full bg-gray-800/50  backdrop-filter backdrop-blur-xl rounded-2xl shadow-gray-800 shadow-xl  overflow-hidden"
+      className="max-w-md w-full bg-gray-800/50  backdrop-filter backdrop-blur-xl rounded-2xl shadow-gray-800 shadow-xl  overflow-hidden"
     >
       <div className='p-8'>
         <h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text'>
@@ -42,9 +55,9 @@ const SignIn = () => {
         <form onSubmit={handleLogin}>
           {[
             {
-              name: "Username",
+              name: "email",
               type: "text",
-              placeholder: "user Name",
+              placeholder: "Email",
               icon: Mail,
             },
             {
@@ -66,13 +79,15 @@ const SignIn = () => {
               autoCorrect="off"
             />
           ))}
-
           <div className='flex items-center mb-6'>
             <Link to='/forgot-password' className='text-sm text-green-400 hover:underline'>
               Forgot password?
             </Link>
           </div>
-          {error && <p className='text-red-500 font-semibold mb-2'>{error}</p>}
+
+          {/*  show error */}
+
+          {/* {error && <p className='text-red-500 font-semibold mb-2 capitalize'>{error}</p>} */}
 
           <motion.button
             whileHover={{ scale: 1.02 }}

@@ -4,6 +4,9 @@ import {
   VERIFICATION_EMAIL_TEMPLATE,
 } from "./emailTemplate.js";
 import { mailtrapClient, sender } from "./mailtrap.config.js";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 export const sendVerificationEmail = async (email, verificationToken) => {
   const recipient = [{ email }];
@@ -31,13 +34,12 @@ export const sendWelcomeEmail = async (email, name) => {
     await mailtrapClient.send({
       from: sender,
       to: recipient,
-      template_uuid: "91de5409-74ce-4b40-b99f-ca93123d2ccb",
+      template_uuid: process.env.WELCOME_EMAIL_TEMPLATE_ID,
       template_variables: {
         "company_info_name ": "Auth Services",
         name: name,
       },
     });
-    console.log("done send");
   } catch (error) {
     throw new Error("Failed to send welcome email", error);
   }

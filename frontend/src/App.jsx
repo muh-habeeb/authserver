@@ -1,24 +1,106 @@
-import FloatingShape from './components/FloatingShape';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
-import EmailVerification from './pages/EmailVerification';
+import FloatingShape from "./components/FloatingShape";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+import EmailVerification from "./pages/EmailVerification";
+import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/AuthStore.js";
+import { useEffect } from "react";
+import Home from "./pages/Home";
+import LoadingScreren from "./components/LoadingScreren";
+
+const ProtectRoute = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" replace />;
+  }
+  if (!user?.isVerified) {
+    return <Navigate to="/verify-email" replace />;
+  }
+  return children;
+};
+
+//redirect authenticated user to home page
+
+const RedirectAuthenticatedUser = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+  if (isAuthenticated && user?.isVerified) {
+    // If the user is authenticated, redirect to the home page
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
 
 const App = () => {
+  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth) {
+    return <LoadingScreren />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900 flex items-center justify-center relative overflow-hidden">
-      <FloatingShape color="bg-green-500" size="w-64 h-64" top="-5%" left="10%" delay={0} />
-      <FloatingShape color="bg-emerald-500" size="w-48 h-48" top="70%" left="80%" delay={5} />
-      <FloatingShape color="bg-lime-500" size="w-32 h-32" top="40%" left="-5%" delay={2} />
+      <FloatingShape
+        color="bg-green-500"
+        size="w-64 h-64"
+        top="-5%"
+        left="10%"
+        delay={0}
+      />
+      <FloatingShape
+        color="bg-emerald-500"
+        size="w-48 h-48"
+        top="70%"
+        left="80%"
+        delay={5}
+      />
+      <FloatingShape
+        color="bg-lime-500"
+        size="w-32 h-32"
+        top="40%"
+        left="-5%"
+        delay={2}
+      />
 
       <Router>
         <Routes>
-          <Route path="/" element={"home"} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/verify-mail" element={<EmailVerification />} />
+          <Route
+            path="/"
+            element={
+              <ProtectRoute>
+                <Home />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <RedirectAuthenticatedUser>
+                <SignUp />
+              </RedirectAuthenticatedUser>
+            }
+          />
+          <Route
+            path="/signin"
+            element={
+              <RedirectAuthenticatedUser>
+                <SignIn />
+              </RedirectAuthenticatedUser>
+            }
+          />
+          <Route path="/verify-email" element={<EmailVerification />} />
         </Routes>
       </Router>
+      <Toaster />
     </div>
   );
 };

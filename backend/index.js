@@ -2,10 +2,16 @@ import express from "express";
 import { connectDB } from "./db/connectDb.js";
 import dotenv from "dotenv";
 import authRoutes from "../backend/routes/auth.route.js";
-import cookieParser  from "cookie-parser";
+import cookieParser from "cookie-parser";
+import cors from 'cors'
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(cors({
+  origin:"http://localhost:3000",
+  credentials:true,
+  methods:["GET","POST"]
+}))
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT;

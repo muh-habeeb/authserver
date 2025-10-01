@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../store/AuthStore.js";
 import toast from "react-hot-toast";
 
 const EmailVerification = () => {
@@ -9,11 +9,17 @@ const EmailVerification = () => {
 	const inputRefs = useRef([]);
 	const navigate = useNavigate();
 
-	const { error, isLoading, verifyEmail } = useAuthStore();
-	console.log(code)
-
+	const { error, isLoading, verifyEmail, isAuthenticated, user } = useAuthStore();
+	useEffect(() => {
+		if (!isAuthenticated) {
+			navigate("/signin");
+		}
+		if (isAuthenticated && user?.isVerified) {
+			navigate("/")
+		}
+	}, [isAuthenticated, navigate]);
 	const handleChange = (index, value) => {
-		if(!/^\d*$/.test(value)) return; // Only allow digits
+		if (!/^\d*$/.test(value)) return; // Only allow digits
 		const newCode = [...code];
 
 		// Handle pasted content
@@ -49,10 +55,11 @@ const EmailVerification = () => {
 		const verificationCode = code.join("");
 		try {
 			await verifyEmail(verificationCode);
-			navigate("/");
 			toast.success("Email verified successfully");
+			navigate("/");
 		} catch (error) {
-			console.log(error);
+			toast.error(error?.response?.data?.message || error.message);
+			console.log("errorroor:", error);
 		}
 	};
 

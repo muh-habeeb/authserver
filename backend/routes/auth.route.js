@@ -16,7 +16,7 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logOut);
 router.post(
-  "/verify", 
+  "/verify-email", 
   [
     body("code")
       .notEmpty()

@@ -16,7 +16,10 @@ export const signup = async (req, res, next) => {
 
     const { email, password, name } = req.body;
     if (!email || !password || !name) {
-      throw new Error("all field are required");
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
     const userExist = await User.findOne({ email });
     if (userExist) {
@@ -57,8 +60,10 @@ export const signup = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: "internal server error",
-      error: error.message,
+      message: error.message,
+      error: "internal server error ",
+      path: "/signup",
+      code: 500,
     });
   }
 };
@@ -79,26 +84,27 @@ export const verifyAccount = async (req, res, next) => {
 
     // check for user?
     if (!user) {
-      console.log(user);
-
       return res.status(400).json({
         success: false,
-        message: "token  not found",
+        message: "Invalid or expired  code",
       });
     }
 
     if (user.verificationTokenExpiresAt < Date.now()) {
       return res.status(400).json({
         success: false,
-        message: "verification token expired",
+        message: "verification code expired",
       });
     }
-
+    // update user
     user.isVerified = true;
     user.verificationToken = null;
     user.verificationTokenExpiresAt = null;
+
     await user.save(); // save the new user
+    //send welcome email
     await sendWelcomeEmail(user.email, user.name);
+    //send response
     return res.status(200).json({
       success: true,
       message: "account verified successfully",
@@ -108,8 +114,9 @@ export const verifyAccount = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: "internal server error",
-      error: error.message,
+      message: error.message,
+      error: "internal server error ",
+      path: "/verify-account",
     });
   }
 };
@@ -122,7 +129,7 @@ export const login = async (req, res, next) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Invalid Credentials",
+        message: "user not found",
       });
     }
     const isPasswordValid = await bcryptjs.compare(password, user.password);
@@ -228,7 +235,7 @@ export const resetPassword = async (req, res) => {
       .json({ success: false, message: "internal server error" });
   }
 };
-//for user is logged or not 
+//for user is logged or not
 export const checkAuth = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
@@ -243,7 +250,7 @@ export const checkAuth = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({
       message: "server error",
       success: false,

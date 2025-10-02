@@ -87,7 +87,7 @@ const SignIn = () => {
 
           {/*  show error */}
 
-          {/* {error && <p className='text-red-500 font-semibold mb-2 capitalize'>{error}</p>} */}
+          {error && <p className='text-red-500 font-semibold mb-2 capitalize'>{error}</p>}
 
           <motion.button
             whileHover={{ scale: 1.02 }}

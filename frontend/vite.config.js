@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(), // Your Tailwind CSS plugin
   ],
   server: {
-    port: 3000,
+    // port: 3000,
     // cors: {
     //   origin: "http://localhost:5000",
     //   credentials: true,

@@ -218,7 +218,7 @@ export const resetPassword = async (req, res) => {
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
-    user.password = hashedPassword; //store hshed password
+    user.password = hashedPassword; //store hashed password
     //make it undefined for non usable attr
     user.resetPasswordExpiresAt = undefined;
     user.resetPasswordToken = undefined;

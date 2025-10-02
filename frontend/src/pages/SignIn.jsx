@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 const SignIn = () => {
   const { login, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
-  //to manage the input fileds
+  //to manage the input fields.
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({

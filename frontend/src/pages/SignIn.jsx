@@ -1,8 +1,8 @@
 import { useState } from "react"
-import { useAuthStore } from "../store/AuthStore.js";
+import { useAuthStore } from "../store/authStore.js";
 import { motion } from "framer-motion"
 import { Mail, Lock, Loader, } from "lucide-react"
-import Input from "../components/input";
+import Input from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 const SignIn = () => {

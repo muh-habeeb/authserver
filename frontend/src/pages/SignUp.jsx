@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
-import Input from "../components/input";
+import Input from "../components/Input";
 import { Loader, Lock, Mail, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
-import { useAuthStore } from "../store/AuthStore.js";
+import { useAuthStore } from "../store/authStore.js";
 import toast from "react-hot-toast";
 const SignUp = () => {
   const [formData, setFormData] = useState({

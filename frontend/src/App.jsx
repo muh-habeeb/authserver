@@ -9,7 +9,7 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import EmailVerification from "./pages/EmailVerification";
 import { Toaster } from "react-hot-toast";
-import { useAuthStore } from "./store/AuthStore.js";
+import { useAuthStore } from "./store/authStore.js";
 import { useEffect } from "react";
 import Home from "./pages/Home";
 import LoadingScreren from "./components/LoadingScreren";

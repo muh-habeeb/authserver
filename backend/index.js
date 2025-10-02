@@ -1,6 +1,6 @@
 import express from "express";
 import { connectDB } from "./db/connectDb.js";
-import { verifyGmailConnection } from "./mailtrap/gmail.config.js";
+import { verifyGmailConnection } from "./mailing/gmail.config.js";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";

@@ -64,8 +64,10 @@ A modern, full-stack authentication system built with Node.js, Express, React, a
    ```
 
 3. **Environment Setup**
+
    
    Create a `.env` file in the root directory:
+   - Refer .env.example
    ```env
    # Database
    MONGO_URL=mongodb://localhost:27017/auth
@@ -284,16 +286,10 @@ If you encounter any issues:
 4. Verify MongoDB connection
 5. Create a new issue with detailed error information
 
-<!-- ## � Future Enhancements
+##  Future Enhancements
 
-- [ ] OAuth integration (Google, GitHub, Facebook)
-- [ ] Two-factor authentication (2FA)
-- [ ] User profile management
-- [ ] Admin dashboard
-- [ ] Rate limiting
-- [ ] Email templates customization
-- [ ] Multi-language support
-- [ ] API documentation with Swagger -->
+
+- [ ] API documentation with Swagger
 
 ---
 

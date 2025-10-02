@@ -6,7 +6,7 @@ import {
   sendWelcomeEmail,
   sendPasswordResetEmail,
   sendPasswordResetOkMail,
-} from "../mailtrap/gmail.emails.js";
+} from "../mailing/gmail.emails.js";
 import { validationResult } from "express-validator";
 import crypto from "crypto";
 

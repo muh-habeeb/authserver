@@ -1,4 +1,4 @@
-import { verifyGmailConnection, gmailTransporter, gmailSender } from "./mailtrap/gmail.config.js";
+import { verifyGmailConnection, gmailTransporter, gmailSender } from "./mailing/gmail.config.js";
 import dotenv from "dotenv";
 
 dotenv.config();

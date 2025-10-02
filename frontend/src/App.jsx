@@ -103,8 +103,8 @@ const App = () => {
           <Route path="/forgot-password" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />
           <Route path="/reset-password/:token"
             element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />
-        </Routes>
         <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </Router>
       <Toaster />
     </div>

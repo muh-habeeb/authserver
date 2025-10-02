@@ -12,7 +12,7 @@ import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore.js";
 import { useEffect } from "react";
 import Home from "./pages/Home";
-import LoadingScreren from "./components/LoadingScreen.jsx";
+import LoadingScreen from "./components/LoadingScreen.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 
@@ -46,7 +46,7 @@ const App = () => {
   }, [checkAuth]);
 
   if (isCheckingAuth) {
-    return <LoadingScreren />;
+    return <LoadingScreen />;
   }
 
   return (

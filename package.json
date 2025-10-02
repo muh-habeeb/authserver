@@ -9,7 +9,10 @@
     "start": "cross-env NODE_ENV=production node backend/index.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
     "frontend": " npm run dev --prefix frontend",
-    "backend": "nodemon backend/index.js"
+    "backend": "nodemon backend/index.js",
+    "docker:build": "docker build -t auth-server .",
+    "docker:start": "docker-compose up -d",
+    "docker:stop": "docker-compose down"
   },
   "keywords": [],
   "author": "",

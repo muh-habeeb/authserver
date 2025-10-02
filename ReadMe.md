@@ -112,7 +112,7 @@ A modern, full-stack authentication system built with Node.js, Express, React, a
    npm run start
    ```
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 authserver/

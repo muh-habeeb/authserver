@@ -289,10 +289,10 @@ If you encounter any issues:
 ##  Future Enhancements
 
 
-- [ ] API documentation with Swagger
+- [x] API documentation with Swagger
 
 ---
-
+```
 ⭐ **Star this repository if you found it helpful!**
 │   │   └── 📄 auth.controller.js
 │   ├── 📁 db/

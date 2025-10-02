@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import Home from "./pages/Home";
 import LoadingScreren from "./components/LoadingScreren";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 const ProtectRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -100,6 +101,8 @@ const App = () => {
           />
           <Route path="/verify-email" element={<EmailVerification />} />
           <Route path="/forgot-password" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />
+          <Route path="/reset-password/:token"
+            element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />
         </Routes>
       </Router>
       <Toaster />

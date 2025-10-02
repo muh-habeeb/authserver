@@ -8,9 +8,8 @@ const ENDPOINT = process.env.MAIL_TRAP_ENDPOINT;
 
 export const mailtrapClient = new MailtrapClient({
   token: TOKEN,
-  // endpoint: ENDPOINT, // not really required
+  // endpoint: ENDPOINT, // not really required,
 });
-// console.log("mailtrap token:", TOKEN);
 
 export const sender = {
   email: process.env.MAIL_TRAP_SENDER_EMAIL,

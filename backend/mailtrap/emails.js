@@ -56,7 +56,7 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
       category: "Password reset",
     });
   } catch (error) {
-    throw new Error("error in send reset password", error);
+    throw new Error("error in send reset password", error.message);
   }
 };
 

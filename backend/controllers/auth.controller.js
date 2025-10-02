@@ -198,7 +198,7 @@ export const forgotPassword = async (req, res, next) => {
     console.log("error in forgotPassword", error);
     return res
       .status(500)
-      .json({ success: false, message: "internal server error" });
+      .json({ success: false, message: error.message });
   }
 };
 
@@ -232,7 +232,7 @@ export const resetPassword = async (req, res) => {
     console.log("error in reset password", error);
     return res
       .status(500)
-      .json({ success: false, message: "internal server error" });
+      .json({ success: false, message: error.message });
   }
 };
 //for user is logged or not

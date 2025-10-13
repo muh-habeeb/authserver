@@ -35,7 +35,7 @@ const SignUp = () => {
       }
       await signup(formData.email, formData.password, formData.name);
       // redirect to verify email page after successful signup
-      toast.success("registration successfull")
+      toast.success("registration successful")
       navigate("/verify-email");
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);

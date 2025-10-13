@@ -344,7 +344,7 @@ export const resendVerificationEmail = async (req, res) => {
       const remainingTime = Math.ceil((twoMinutes - (now - user.lastResendTime.getTime())) / 1000);
       return res.status(429).json({
         success: false,
-        message: `Please wait ${Math.ceil(remainingTime / 60)} minute(s) before requesting another verification email`,
+        message: `Please wait ${Math.ceil(remainingTime / 60)} minutes before requesting another verification email`,
         remainingTime: remainingTime
       });
     }

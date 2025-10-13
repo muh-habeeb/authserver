@@ -30,6 +30,10 @@ export const useAuthStore = create((set) => ({
 	},
 	login: async (email, password) => {
 		set({ isLoading: true, error: null });
+		if (!email || !password) {
+			set({ error: "Email and password are required", isLoading: false });
+			throw new Error("Email and password are required");
+		}
 		try {
 			const response = await axios.post(`${API_URL}/login`, { email, password });
 			set({
@@ -39,7 +43,8 @@ export const useAuthStore = create((set) => ({
 				isLoading: false,
 			});
 		} catch (error) {
-			set({ error: error.response?.data?.message || "Error logging in", isLoading: false });
+			set({ error: error.response?.data?.message, isLoading: false });
+			console.log(error)
 			throw error;
 		}
 	},
@@ -100,6 +105,20 @@ export const useAuthStore = create((set) => ({
 			set({
 				isLoading: false,
 				error: error.response.data.message || "Error resetting password",
+			});
+			throw error;
+		}
+	},
+	resendVerificationEmail: async () => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.post(`${API_URL}/resend-verification`);
+			set({ message: response.data.message, isLoading: false });
+			return response.data;
+		} catch (error) {
+			set({
+				isLoading: false,
+				error: error.response?.data?.message || "Error resending verification email",
 			});
 			throw error;
 		}

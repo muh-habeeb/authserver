@@ -4,15 +4,20 @@ import { useAuthStore } from "../store/authStore.js";
 import Input from "../components/Input";
 import { ArrowLeft, Loader, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const { isLoading, forgotPassword } = useAuthStore();
+    const { isLoading, forgotPassword,error } = useAuthStore();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!email) {
+            toast.error("Email is required");
+            return;
+        }
         await forgotPassword(email);
         setIsSubmitted(true);
     };
@@ -28,6 +33,7 @@ const ForgotPassword = () => {
                 <h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text'>
                     Forgot Password
                 </h2>
+          {error && <p className='text-red-500 font-semibold mb-2 capitalize'>{error}</p>}
 
                 {!isSubmitted ? (
                     <form onSubmit={handleSubmit}>

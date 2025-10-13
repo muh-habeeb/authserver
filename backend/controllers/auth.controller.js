@@ -316,3 +316,81 @@ export const checkAuth = async (req, res) => {
     });
   }
 };
+
+// Resend verification email with rate limiting
+export const resendVerificationEmail = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is already verified"
+      });
+    }
+
+    // Check rate limiting (2 minutes = 120000ms)
+    const now = Date.now();
+    const twoMinutes = 2 * 60 * 1000;
+    
+    if (user.lastResendTime && (now - user.lastResendTime.getTime()) < twoMinutes) {
+      const remainingTime = Math.ceil((twoMinutes - (now - user.lastResendTime.getTime())) / 1000);
+      return res.status(429).json({
+        success: false,
+        message: `Please wait ${Math.ceil(remainingTime / 60)} minute(s) before requesting another verification email`,
+        remainingTime: remainingTime
+      });
+    }
+
+    // Generate new verification token
+    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Update user with new token, expiry, and resend time
+    user.verificationToken = verificationToken;
+    user.verificationTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
+    user.lastResendTime = new Date();
+    
+    await user.save();
+
+    // Send verification email
+    try {
+      await sendVerificationEmail(user.email, verificationToken);
+      
+      return res.status(200).json({
+        success: true,
+        message: "Verification email sent successfully",
+        canResendAt: new Date(Date.now() + twoMinutes).toISOString()
+      });
+    } catch (emailError) {
+      console.log("Resend verification email failed:", emailError.message);
+      
+      if (emailError.type === "NETWORK_ERROR") {
+        return res.status(500).json({
+          success: false,
+          message: "Unable to send verification email due to network issues. Please check your internet connection and try again.",
+          error: "NETWORK_ERROR"
+        });
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to send verification email. Please try again later.",
+          error: "EMAIL_SERVICE_ERROR"
+        });
+      }
+    }
+
+  } catch (error) {
+    console.log("Error in resendVerificationEmail:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};

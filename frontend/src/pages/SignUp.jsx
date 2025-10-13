@@ -31,7 +31,6 @@ const SignUp = () => {
     try {
       if (!formData.email || !formData.password || !formData.name) {
         console.log("a;;")
-        throw new Error("All fields are required")
 
       }
       await signup(formData.email, formData.password, formData.name);
@@ -40,7 +39,6 @@ const SignUp = () => {
       navigate("/verify-email");
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
-      console.log("errorroor:", error?.response?.data?.message || error.message);
     }
   };
   return (

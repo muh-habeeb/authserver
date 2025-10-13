@@ -43,7 +43,6 @@ const App = () => {
 
   useEffect(() => {
     checkAuth();
-    if(user){console.log("Current user:", user);}
   }, [checkAuth]);
 
   if (isCheckingAuth) {

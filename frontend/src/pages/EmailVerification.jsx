@@ -85,7 +85,6 @@ const EmailVerification = () => {
 			navigate("/");
 		} catch (error) {
 			toast.error(error?.response?.data?.message || error.message);
-			console.log("errorroor:", error);
 		}
 	}, [code, verifyEmail, navigate]);
 

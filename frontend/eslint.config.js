@@ -26,6 +26,7 @@ export default defineConfig([
       "react/prop-types": "off", // Optional, if you're not using PropTypes
       "react/jsx-no-target-blank": "off",
       "react/no-unescape-entities":"off",
+      "eslint/no-unused-vars":"off",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

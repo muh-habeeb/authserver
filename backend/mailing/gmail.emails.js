@@ -9,6 +9,39 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// Custom error classes for better error handling
+class NetworkError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "NetworkError";
+    this.type = "NETWORK_ERROR";
+  }
+}
+
+class EmailServiceError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "EmailServiceError";
+    this.type = "EMAIL_SERVICE_ERROR";
+  }
+}
+
+// Helper function to determine if error is network-related
+const isNetworkError = (error) => {
+  const networkErrorCodes = [
+    'EHOSTUNREACH',  // Host unreachable (no internet)
+    'ENOTFOUND',     // DNS lookup failed
+    'ETIMEDOUT',     // Connection timeout
+    'ECONNREFUSED',  // Connection refused
+    'ECONNRESET',    // Connection reset
+    'ENETUNREACH'    // Network unreachable
+  ];
+  
+  return networkErrorCodes.some(code => 
+    error.code === code || error.message.includes(code)
+  );
+};
+
 export const sendVerificationEmail = async (email, verificationToken) => {
   const mailOptions = {
     from: `${gmailSender.name} <${gmailSender.email}>`,
@@ -26,7 +59,12 @@ export const sendVerificationEmail = async (email, verificationToken) => {
     return info;
   } catch (error) {
     console.error("❌ Failed to send verification email:", error.message);
-    throw new Error("Failed to send verification email: " + error.message);
+    
+    if (isNetworkError(error)) {
+      throw new NetworkError("Unable to send verification email. Please check your internet connection and try again.");
+    } else {
+      throw new EmailServiceError("Failed to send verification email. Please try again later.");
+    }
   }
 };
 
@@ -44,7 +82,12 @@ export const sendWelcomeEmail = async (email, name) => {
     return info;
   } catch (error) {
     console.error("❌ Failed to send welcome email:", error.message);
-    throw new Error("Failed to send welcome email: " + error.message);
+    
+    if (isNetworkError(error)) {
+      throw new NetworkError("Unable to send welcome email. Please check your internet connection and try again.");
+    } else {
+      throw new EmailServiceError("Failed to send welcome email. Please try again later.");
+    }
   }
 };
 
@@ -62,7 +105,12 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
     return info;
   } catch (error) {
     console.error("❌ Failed to send password reset email:", error.message);
-    throw new Error("Failed to send password reset email: " + error.message);
+    
+    if (isNetworkError(error)) {
+      throw new NetworkError("Unable to send password reset email. Please check your internet connection and try again.");
+    } else {
+      throw new EmailServiceError("Failed to send password reset email. Please try again later.");
+    }
   }
 };
 
@@ -80,6 +128,10 @@ export const sendPasswordResetOkMail = async (email) => {
     return info;
   } catch (error) {
     console.error("❌ Failed to send password reset confirmation:", error.message);
-    throw new Error("Failed to send password reset confirmation: " + error.message);
+    if (isNetworkError(error)) {
+      throw new NetworkError("Unable to send password reset confirmation. Please check your internet connection and try again.");
+    } else {
+      throw new EmailServiceError("Failed to send password reset confirmation. Please try again later.");
+    }
   }
 };

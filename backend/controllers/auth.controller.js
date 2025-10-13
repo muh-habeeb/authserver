@@ -47,7 +47,33 @@ export const signup = async (req, res, next) => {
 
     // jwt
     genJwtAndSetCookie(res, user._id);
-    await sendVerificationEmail(user.email, verificationToken);
+    
+    try {
+      await sendVerificationEmail(user.email, verificationToken);
+    } catch (emailError) {
+      // Even if email fails, account was created successfully
+      console.log("Email sending failed:", emailError.message);
+      
+      if (emailError.type === "NETWORK_ERROR") {
+        return res.status(201).json({
+          success: true,
+          message: "Account created successfully, but verification email could not be sent due to network issues. Please check your internet connection and try verifying later.",
+          ...user._doc,
+          password: null,
+          verificationToken: null,
+          emailWarning: "Verification email failed to send - network issue"
+        });
+      } else {
+        return res.status(201).json({
+          success: true,
+          message: "Account created successfully, but verification email could not be sent. Please try verifying later.",
+          ...user._doc,
+          password: null,
+          verificationToken: null,
+          emailWarning: "Verification email failed to send - service issue"
+        });
+      }
+    }
 
     // success response
     return res.status(201).json({
@@ -102,8 +128,15 @@ export const verifyAccount = async (req, res, next) => {
     user.verificationTokenExpiresAt = null;
 
     await user.save(); // save the new user
+    
     //send welcome email
-    await sendWelcomeEmail(user.email, user.name);
+    try {
+      await sendWelcomeEmail(user.email, user.name);
+    } catch (emailError) {
+      // Account verification still succeeded even if welcome email fails
+      console.log("Welcome email sending failed:", emailError.message);
+    }
+    
     //send response
     return res.status(200).json({
       success: true,
@@ -186,14 +219,33 @@ export const forgotPassword = async (req, res, next) => {
     const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpiresAt = resetTokenExpiresAt;
-    user.save();
-    await sendPasswordResetEmail(
-      user.email,
-      `${process.env.CLIENT_URL}/reset-password/${resetToken}`
-    );
-    return res
-      .status(200)
-      .json({ success: true, message: "rest link sended to your Email" });
+    await user.save();
+    
+    try {
+      await sendPasswordResetEmail(
+        user.email,
+        `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+      );
+      return res
+        .status(200)
+        .json({ success: true, message: "Reset link sent to your email" });
+    } catch (emailError) {
+      console.log("Password reset email sending failed:", emailError.message);
+      
+      if (emailError.type === "NETWORK_ERROR") {
+        return res.status(500).json({
+          success: false,
+          message: "Unable to send reset email due to network issues. Please check your internet connection and try again.",
+          error: "NETWORK_ERROR"
+        });
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to send reset email. Please try again later.",
+          error: "EMAIL_SERVICE_ERROR"
+        });
+      }
+    }
   } catch (error) {
     console.log("error in forgotPassword", error);
     return res
@@ -222,8 +274,15 @@ export const resetPassword = async (req, res) => {
     //make it undefined for non usable attr
     user.resetPasswordExpiresAt = undefined;
     user.resetPasswordToken = undefined;
-    user.save(); //save document
-    await sendPasswordResetOkMail(user.email); //send  ok mail
+    await user.save(); //save document
+    
+    try {
+      await sendPasswordResetOkMail(user.email); //send  ok mail
+    } catch (emailError) {
+      // Password was still reset successfully even if confirmation email fails
+      console.log("Password reset confirmation email failed:", emailError.message);
+    }
+    
     return res.status(200).json({
       success: true,
       message: "password updated successfully",
